@@ -1,11 +1,19 @@
 package com.example.finanzaspersonalesnuevo.Model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.Date;
 
+@Entity(tableName = "transaccion") // Cambiado a "transaccion"
 public class Transaccion {
+
+    @PrimaryKey(autoGenerate = true)
+    private int id; // ID para identificar cada transacción en la base de datos
+
     private String descripcion;
     private double cantidad;
-    private Date fecha;
+    private Date fecha; // Room puede guardar fechas como long internamente
     private String categoria;
 
     // Constructor
@@ -17,6 +25,14 @@ public class Transaccion {
     }
 
     // Getters y Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getDescripcion() {
         return descripcion;
     }

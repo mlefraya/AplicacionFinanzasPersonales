@@ -1,0 +1,9 @@
+<resources>
+    <!-- Tema principal de la aplicación -->
+    <style name="Theme.MiAppFinanzas" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Colores principales -->
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorOnPrimary">@color/white</item> <!-- Color del texto/íconos sobre el color primary -->
+        <item name="colorSecondary">@color/teal_200</item>
+    </style>
+</resources>

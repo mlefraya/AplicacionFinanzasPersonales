@@ -47,6 +47,12 @@ public class TransaccionAdapter extends RecyclerView.Adapter<TransaccionAdapter.
         return transacciones.size();
     }
 
+    // Método para actualizar la lista de transacciones y notificar al RecyclerView
+    public void actualizarLista(List<Transaccion> nuevasTransacciones) {
+        this.transacciones = nuevasTransacciones;
+        notifyDataSetChanged(); // Notifica que los datos han cambiado
+    }
+
     public static class TransaccionViewHolder extends RecyclerView.ViewHolder {
         TextView tvDescripcion, tvCantidad, tvFecha, tvCategoria;
 

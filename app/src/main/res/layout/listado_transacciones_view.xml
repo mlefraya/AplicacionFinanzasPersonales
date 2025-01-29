@@ -11,11 +11,12 @@
         android:id="@+id/fabAgregar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/add_icon"
         android:contentDescription="Agregar transacción"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_margin="16dp"
+        android:layout_gravity="end|bottom"
+        android:tint="@color/white"
+        android:backgroundTint="@color/black"
+    />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,44 +1,45 @@
 package com.example.finanzaspersonalesnuevo.ViewModel;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import android.app.Application;
 
-import com.example.finanzaspersonalesnuevo.Controller.TransaccionController;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
+import com.example.finanzaspersonalesnuevo.data.AppDatabase;
+import com.example.finanzaspersonalesnuevo.data.TransaccionDao;
 import com.example.finanzaspersonalesnuevo.Model.Transaccion;
 
 import java.util.List;
 
-public class TransaccionViewModel extends ViewModel {
+public class TransaccionViewModel extends AndroidViewModel {
 
-    private final TransaccionController transaccionController;
-    private final MutableLiveData<List<Transaccion>> transaccionesLiveData;
+    private final TransaccionDao transaccionDao;
+    private final LiveData<List<Transaccion>> transaccionesLiveData;
 
-    public TransaccionViewModel() {
-        transaccionController = new TransaccionController();
-        transaccionesLiveData = new MutableLiveData<>();
-        cargarTransacciones();
+    public TransaccionViewModel(Application application) {
+        super(application);
+        AppDatabase db = AppDatabase.getInstancia(application);
+        transaccionDao = db.transaccionDao();
+        transaccionesLiveData = transaccionDao.obtenerTodas(); // LiveData que observa todas las transacciones
     }
 
-    // Método para cargar las transacciones iniciales en LiveData
-    private void cargarTransacciones() {
-        transaccionesLiveData.setValue(transaccionController.obtenerTransacciones());
-    }
-
-    // Obtener LiveData de las transacciones
+    // Obtener LiveData de todas las transacciones
     public LiveData<List<Transaccion>> obtenerTransaccionesLiveData() {
         return transaccionesLiveData;
     }
 
-    // Agregar una transacción y actualizar LiveData
+    // Agregar una nueva transacción (esto se debe ejecutar en un hilo secundario)
     public void agregarTransaccion(Transaccion transaccion) {
-        transaccionController.agregarTransaccion(transaccion);
-        cargarTransacciones();
+        AppDatabase.databaseWriteExecutor.execute(() -> transaccionDao.insertar(transaccion));
+    }
+
+    // Eliminar una transacción (también en un hilo secundario)
+    public void eliminarTransaccion(Transaccion transaccion) {
+        AppDatabase.databaseWriteExecutor.execute(() -> transaccionDao.eliminar(transaccion));
     }
 
     // Filtrar transacciones por categoría
-    public void filtrarTransaccionesPorCategoria(String categoria) {
-        List<Transaccion> filtradas = transaccionController.obtenerTransaccionesPorCategoria(categoria);
-        transaccionesLiveData.setValue(filtradas);
+    public LiveData<List<Transaccion>> obtenerTransaccionesPorCategoria(String categoria) {
+        return transaccionDao.obtenerPorCategoria(categoria);
     }
 }
