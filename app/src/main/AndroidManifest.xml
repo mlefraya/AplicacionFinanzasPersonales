@@ -12,15 +12,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinanzasPersonalesNuevo"
         tools:targetApi="31">
+
+        <!-- Actividad principal -->
         <activity
             android:name=".View.ListadoTransaccionesView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Nueva actividad para agregar transacciones -->
+        <activity android:name=".View.NuevaTransaccionActivity" />
+
     </application>
 
 </manifest>

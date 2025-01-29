@@ -24,6 +24,8 @@ public class ListadoTransaccionesView extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listado_transacciones_view); // Diseño principal de la actividad
 
@@ -31,6 +33,7 @@ public class ListadoTransaccionesView extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewTransacciones);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        
         // Datos de prueba
         transacciones = generarDatosPrueba();
 
