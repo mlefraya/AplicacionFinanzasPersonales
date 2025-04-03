@@ -14,23 +14,24 @@ import java.util.List;
 @Dao
 public interface TransaccionDao {
 
-    // Obtener todas las transacciones
-    @Query("SELECT * FROM transaccion") // Cambia el nombre de la tabla a "transaccion"
-    LiveData<List<Transaccion>> obtenerTodas();
-
-    // Obtener transacciones filtradas por categoría
-    @Query("SELECT * FROM transaccion WHERE categoria = :categoria") // Cambia el nombre de la tabla
-    LiveData<List<Transaccion>> obtenerPorCategoria(String categoria);
-
-    // Insertar una nueva transacción
     @Insert
-    void insertar(Transaccion transaccion);
+    long insertTransaccion(Transaccion transaccion);
 
-    // Eliminar una transacción
-    @Delete
-    void eliminar(Transaccion transaccion);
-
-    // (Opcional) Actualizar una transacción existente
     @Update
-    void actualizar(Transaccion transaccion);
+    int updateTransaccion(Transaccion transaccion);
+
+    @Delete
+    void deleteTransaccion(Transaccion transaccion);
+
+    @Query("SELECT * FROM transaccion ORDER BY fecha DESC")
+    LiveData<List<Transaccion>> getAllTransacciones();
+
+    @Query("SELECT * FROM transaccion WHERE categoria = :categoria ORDER BY fecha DESC")
+    LiveData<List<Transaccion>> getTransaccionesByCategoria(String categoria);
+
+    @Query("SELECT * FROM transaccion WHERE descripcion LIKE '%' || :descripcion || '%' ORDER BY fecha DESC")
+    LiveData<List<Transaccion>> getTransaccionesByDescripcion(String descripcion);
+
+    @Query("SELECT * FROM transaccion WHERE id = :id")
+    LiveData<Transaccion> getTransaccionById(int id);
 }

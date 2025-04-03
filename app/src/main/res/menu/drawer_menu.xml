@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_listado_transacciones"
+        android:title="Listado de Transacciones"
+        android:icon="@android:drawable/ic_menu_agenda" />
+
+    <item
+        android:id="@+id/nav_objetivos_ahorro"
+        android:title="Objetivos de Ahorro"
+        android:icon="@android:drawable/ic_menu_save" />
+
+    <item
+        android:id="@+id/nav_resumen_financiero"
+        android:title="Resumen Financiero"
+        android:icon="@android:drawable/ic_menu_gallery" />
+
+    <item
+        android:id="@+id/nav_configuracion"
+        android:title="Configuración"
+        android:icon="@android:drawable/ic_menu_preferences" />
+
+
+</menu>

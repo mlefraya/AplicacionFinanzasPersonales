@@ -13,9 +13,9 @@
         android:theme="@style/Theme.FinanzasPersonalesNuevo"
         tools:targetApi="31">
 
-        <!-- Actividad principal -->
+        <!-- Actividad principal: MainActivity (contendrá el Navigation Drawer y los fragmentos) -->
         <activity
-            android:name=".View.ListadoTransaccionesView"
+            android:name=".View.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,8 +23,11 @@
             </intent-filter>
         </activity>
 
-        <!-- Nueva actividad para agregar transacciones -->
+        <!-- Actividad para agregar transacciones -->
         <activity android:name=".View.NuevaTransaccionActivity" />
+
+        <!-- Actividad para editar transacciones -->
+        <activity android:name=".View.EditarTransaccionActivity" />
 
     </application>
 

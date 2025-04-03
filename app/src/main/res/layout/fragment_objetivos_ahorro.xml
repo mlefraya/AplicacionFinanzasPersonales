@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nombre del objetivo -->
+        <EditText
+            android:id="@+id/etDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Descripción del objetivo"
+            android:textSize="16sp"
+            android:minHeight="56dp"
+            android:padding="12dp"/>
+
+        <!-- Monto objetivo -->
+        <EditText
+            android:id="@+id/etMontoObjetivo"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Monto objetivo"
+            android:inputType="numberDecimal"
+            android:textSize="16sp"
+            android:minHeight="56dp"
+            android:padding="12dp"/>
+
+        <!-- Monto actual -->
+        <EditText
+            android:id="@+id/etMontoActual"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Monto ahorrado actual"
+            android:inputType="numberDecimal"
+            android:textSize="16sp"
+            android:minHeight="56dp"
+            android:padding="12dp"/>
+
+        <!-- Fecha inicio -->
+        <EditText
+            android:id="@+id/etFechaInicio"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Fecha inicio (dd/MM/yyyy)"
+            android:textSize="16sp"
+            android:minHeight="56dp"
+            android:padding="12dp"/>
+
+        <!-- Fecha fin -->
+        <EditText
+            android:id="@+id/etFechaFin"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Fecha fin (dd/MM/yyyy)"
+            android:textSize="16sp"
+            android:minHeight="56dp"
+            android:padding="12dp"/>
+
+        <!-- Botón para guardar objetivo -->
+        <Button
+            android:id="@+id/btnGuardarObjetivo"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Guardar"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"/>
+
+        <!-- RecyclerView para mostrar la lista -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewObjetivos"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_marginTop="24dp"/>
+
+    </LinearLayout>
+</ScrollView>

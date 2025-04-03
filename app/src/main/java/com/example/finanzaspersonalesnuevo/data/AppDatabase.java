@@ -1,35 +1,38 @@
 package com.example.finanzaspersonalesnuevo.data;
 
 import android.content.Context;
-
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-
 import com.example.finanzaspersonalesnuevo.Model.Transaccion;
-
+import com.example.finanzaspersonalesnuevo.Model.ObjetivoAhorro;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Transaccion.class}, version = 1, exportSchema = false)
-@TypeConverters(Converters.class) // Agrega los conversores
+@Database(entities = {Transaccion.class, ObjetivoAhorro.class}, version = 4, exportSchema = false)
+@TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static AppDatabase instancia;
     public abstract TransaccionDao transaccionDao();
+    public abstract ObjetivoAhorroDao objetivoAhorroDao();
 
-    // Executor para las operaciones de base de datos en segundo plano
+    private static volatile AppDatabase INSTANCE;
+    private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =
-            Executors.newFixedThreadPool(4); // Número de hilos que el ejecutor puede manejar
+            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    public static synchronized AppDatabase getInstancia(Context context) {
-        if (instancia == null) {
-            instancia = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "finanzas_personales_db")
-                    .fallbackToDestructiveMigration() // Manejo básico de migraciones
-                    .build();
+    public static AppDatabase getInstance(final Context context) {
+        if (INSTANCE == null) {
+            synchronized (AppDatabase.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                                    AppDatabase.class, "finanzas_personales.db")
+                            .fallbackToDestructiveMigration() // Se destruye y recrea la DB en caso de cambio de esquema
+                            .build();
+                }
+            }
         }
-        return instancia;
+        return INSTANCE;
     }
 }

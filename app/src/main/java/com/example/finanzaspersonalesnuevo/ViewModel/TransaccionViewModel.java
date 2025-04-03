@@ -1,14 +1,11 @@
 package com.example.finanzaspersonalesnuevo.ViewModel;
 
 import android.app.Application;
-
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-
 import com.example.finanzaspersonalesnuevo.data.AppDatabase;
 import com.example.finanzaspersonalesnuevo.data.TransaccionDao;
 import com.example.finanzaspersonalesnuevo.Model.Transaccion;
-
 import java.util.List;
 
 public class TransaccionViewModel extends AndroidViewModel {
@@ -18,28 +15,28 @@ public class TransaccionViewModel extends AndroidViewModel {
 
     public TransaccionViewModel(Application application) {
         super(application);
-        AppDatabase db = AppDatabase.getInstancia(application);
+        AppDatabase db = AppDatabase.getInstance(application);
         transaccionDao = db.transaccionDao();
-        transaccionesLiveData = transaccionDao.obtenerTodas(); // LiveData que observa todas las transacciones
+        transaccionesLiveData = transaccionDao.getAllTransacciones();
     }
 
     // Obtener LiveData de todas las transacciones
-    public LiveData<List<Transaccion>> obtenerTransaccionesLiveData() {
+    public LiveData<List<Transaccion>> getTransaccionesLiveData() {
         return transaccionesLiveData;
     }
 
-    // Agregar una nueva transacción (esto se debe ejecutar en un hilo secundario)
-    public void agregarTransaccion(Transaccion transaccion) {
-        AppDatabase.databaseWriteExecutor.execute(() -> transaccionDao.insertar(transaccion));
+    // Agregar una nueva transacción (se ejecuta en un hilo secundario)
+    public void addTransaccion(Transaccion transaccion) {
+        AppDatabase.databaseWriteExecutor.execute(() -> transaccionDao.insertTransaccion(transaccion));
     }
 
-    // Eliminar una transacción (también en un hilo secundario)
-    public void eliminarTransaccion(Transaccion transaccion) {
-        AppDatabase.databaseWriteExecutor.execute(() -> transaccionDao.eliminar(transaccion));
+    // Eliminar una transacción (se ejecuta en un hilo secundario)
+    public void deleteTransaccion(Transaccion transaccion) {
+        AppDatabase.databaseWriteExecutor.execute(() -> transaccionDao.deleteTransaccion(transaccion));
     }
 
     // Filtrar transacciones por categoría
-    public LiveData<List<Transaccion>> obtenerTransaccionesPorCategoria(String categoria) {
-        return transaccionDao.obtenerPorCategoria(categoria);
+    public LiveData<List<Transaccion>> getTransaccionesByCategoria(String categoria) {
+        return transaccionDao.getTransaccionesByCategoria(categoria);
     }
 }
