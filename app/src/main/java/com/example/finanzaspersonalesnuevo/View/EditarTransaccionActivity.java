@@ -1,18 +1,19 @@
 package com.example.finanzaspersonalesnuevo.View;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.example.finanzaspersonalesnuevo.Model.Transaccion;
 import com.example.finanzaspersonalesnuevo.R;
 import com.example.finanzaspersonalesnuevo.ViewModel.EditarTransaccionViewModel;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,7 +25,6 @@ public class EditarTransaccionActivity extends AppCompatActivity {
     private Spinner spinnerCategoria, spinnerTipo;
     private Button btnActualizar, btnCancelar;
     private EditarTransaccionViewModel viewModel;
-    private static final String TAG = "EditarTransaccionActivity";
     private int transaccionId; // ID de la transacción a editar
 
     @Override
@@ -38,15 +38,15 @@ public class EditarTransaccionActivity extends AppCompatActivity {
         spinnerCategoria = findViewById(R.id.spinnerCategoria);
         spinnerTipo = findViewById(R.id.spinnerTipo);
         btnActualizar = findViewById(R.id.btnActualizar);
-        btnCancelar = findViewById(R.id.btnCancelar);  // Botón de cancelar
+        btnCancelar = findViewById(R.id.btnCancelar);
 
-        // Poblamos el Spinner para tipo (Ingreso o Gasto)
+        // Configuramos el Spinner para tipo (Ingreso o Gasto)
         String[] tipos = {"Ingreso", "Gasto"};
         ArrayAdapter<String> adapterTipo = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tipos);
         adapterTipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipo.setAdapter(adapterTipo);
 
-        // Obtenemos el ID de la transacción a editar
+        // Obtenemos el ID de la transacción a editar desde el Intent
         transaccionId = getIntent().getIntExtra("transaccionId", -1);
         if (transaccionId == -1) {
             Toast.makeText(this, "Error: Transacción no encontrada", Toast.LENGTH_SHORT).show();
@@ -62,28 +62,33 @@ public class EditarTransaccionActivity extends AppCompatActivity {
             if (transaccion != null) {
                 etDescripcion.setText(transaccion.getDescripcion());
                 etCantidad.setText(String.valueOf(transaccion.getCantidad()));
+
+                // Formateamos la fecha
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 etFecha.setText(sdf.format(transaccion.getFecha()));
 
-                // Cargar categorías según el tipo
+                // Cargamos las categorías según el tipo
+                String[] categoriasIngreso = {"Salario", "Inversión", "Regalo"};
+                String[] categoriasGasto = {"Compras", "Hogar", "Transporte", "Ocio", "Comida"};
                 String tipo = transaccion.getTipo();
                 if (tipo.equalsIgnoreCase("Ingreso")) {
-                    String[] categoriasIngreso = {"Salario", "Inversión", "Regalo"};
                     ArrayAdapter<String> adapterIngreso = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriasIngreso);
                     adapterIngreso.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapterIngreso);
+                    spinnerTipo.setSelection(0);
                 } else if (tipo.equalsIgnoreCase("Gasto")) {
-                    String[] categoriasGasto = {"Compras", "Hogar", "Transporte", "Ocio", "Comida"};
                     ArrayAdapter<String> adapterGasto = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriasGasto);
                     adapterGasto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapterGasto);
-                }
-
-                // Seleccionar el tipo en el Spinner
-                if (tipo.equalsIgnoreCase("Ingreso")) {
-                    spinnerTipo.setSelection(0);
-                } else if (tipo.equalsIgnoreCase("Gasto")) {
                     spinnerTipo.setSelection(1);
+                }
+                // Seleccionamos la categoría correspondiente
+                for (int i = 0; i < spinnerCategoria.getAdapter().getCount(); i++) {
+                    String item = (String) spinnerCategoria.getAdapter().getItem(i);
+                    if (item.equalsIgnoreCase(transaccion.getCategoria())) {
+                        spinnerCategoria.setSelection(i);
+                        break;
+                    }
                 }
             } else {
                 Toast.makeText(EditarTransaccionActivity.this, "Error al cargar la transacción", Toast.LENGTH_SHORT).show();
@@ -91,7 +96,7 @@ public class EditarTransaccionActivity extends AppCompatActivity {
             }
         });
 
-        // Botón para actualizar la transacción
+        // Lógica para el botón Actualizar
         btnActualizar.setOnClickListener(v -> {
             String nuevaDescripcion = etDescripcion.getText().toString().trim();
             String nuevaCantidadStr = etCantidad.getText().toString().trim();
@@ -117,14 +122,13 @@ public class EditarTransaccionActivity extends AppCompatActivity {
             try {
                 nuevaFecha = sdf.parse(nuevaFechaStr);
             } catch (ParseException e) {
+                e.printStackTrace();
                 Toast.makeText(EditarTransaccionActivity.this, "Error en el formato de fecha. Usa dd/MM/yyyy", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Creamos la transacción actualizada con los datos ingresados
+            // Creamos la transacción actualizada con los datos nuevos
             Transaccion transaccionAEditar = new Transaccion(nuevaDescripcion, nuevaCantidad, nuevaFecha, nuevaCategoria, tipoTransaccion);
-            // Para actualizar, es necesario asignar el mismo ID a la transacción
-            transaccionAEditar.setId(transaccionId);
 
             // Llamamos al ViewModel para actualizar la transacción
             viewModel.actualizarTransaccion(transaccionAEditar);
@@ -133,10 +137,7 @@ public class EditarTransaccionActivity extends AppCompatActivity {
             finish();
         });
 
-        // Botón de cancelar: cierra la actividad sin guardar cambios
-        btnCancelar.setOnClickListener(v -> {
-            Toast.makeText(EditarTransaccionActivity.this, "Operación cancelada", Toast.LENGTH_SHORT).show();
-            finish();
-        });
+        // Botón Cancelar: cierra la actividad sin hacer cambios
+        btnCancelar.setOnClickListener(v -> finish());
     }
 }

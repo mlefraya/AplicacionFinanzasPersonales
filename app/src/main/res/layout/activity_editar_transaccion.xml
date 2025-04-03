@@ -6,61 +6,66 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- EditText para la descripción -->
     <EditText
         android:id="@+id/etDescripcion"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:hint="Descripción"
         android:textSize="16sp"
-        android:padding="12dp"/>
+        android:layout_marginBottom="8dp" />
 
+    <!-- EditText para la cantidad -->
     <EditText
         android:id="@+id/etCantidad"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:hint="Cantidad"
         android:inputType="numberDecimal"
         android:textSize="16sp"
-        android:padding="12dp"/>
+        android:layout_marginBottom="8dp" />
 
+    <!-- EditText para la fecha -->
     <EditText
         android:id="@+id/etFecha"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:hint="Fecha (dd/MM/yyyy)"
         android:textSize="16sp"
-        android:padding="12dp"/>
+        android:layout_marginBottom="8dp" />
 
-    <Spinner
-        android:id="@+id/spinnerCategoria"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:padding="12dp"/>
-
+    <!-- Spinner para seleccionar el tipo (Ingreso o Gasto) -->
     <Spinner
         android:id="@+id/spinnerTipo"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:padding="12dp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Spinner para seleccionar la categoría -->
+    <Spinner
+        android:id="@+id/spinnerCategoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Contenedor horizontal para botones -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="16dp">
+        android:gravity="center">
 
         <Button
             android:id="@+id/btnActualizar"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:text="Actualizar"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginEnd="16dp" />
 
         <Button
             android:id="@+id/btnCancelar"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="Cancelar"/>
+            android:layout_height="wrap_content"
+            android:text="Cancelar" />
     </LinearLayout>
 </LinearLayout>
