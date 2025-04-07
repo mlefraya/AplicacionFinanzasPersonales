@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,63 +10,62 @@
         android:padding="16dp"
         android:gravity="center_horizontal">
 
+        <!-- Sección de Ingresos -->
         <TextView
-            android:id="@+id/tvIngresos"
+            android:id="@+id/tvTituloIngresos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ingresos: 0.00€"
+            android:text="Gráfico de Ingresos"
             android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChartIngresos"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
             android:layout_marginBottom="8dp" />
 
         <TextView
-            android:id="@+id/tvGastos"
+            android:id="@+id/tvTotalIngresos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gastos: 0.00€"
+            android:text="Total Ingresos: 0.00€"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Sección de Gastos -->
+        <TextView
+            android:id="@+id/tvTituloGastos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gráfico de Gastos"
             android:textSize="18sp"
+            android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChartGastos"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvTotalGastos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Gastos: 0.00€"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Balance General -->
         <TextView
             android:id="@+id/tvBalanceTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Balance: 0.00€"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Título para el gráfico de Ingresos -->
-        <TextView
-            android:id="@+id/tvTituloIngresos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gráfico de Ingresos"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Gráfico de pastel para Ingresos -->
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/pieChartIngresos"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Título para el gráfico de Gastos -->
-        <TextView
-            android:id="@+id/tvTituloGastos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gráfico de Gastos"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Gráfico de pastel para Gastos -->
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/pieChartGastos"
-            android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>

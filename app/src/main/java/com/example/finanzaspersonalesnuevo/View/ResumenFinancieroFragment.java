@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class ResumenFinancieroFragment extends Fragment {
 
-    private TextView tvIngresos, tvGastos, tvBalanceTotal;
+    private TextView tvTotalIngresos, tvTotalGastos, tvBalanceTotal;
     private PieChart pieChartIngresos, pieChartGastos;
     private TransaccionViewModel viewModel;
 
@@ -37,28 +37,29 @@ public class ResumenFinancieroFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_resumen_financiero, container, false);
 
-        tvIngresos = view.findViewById(R.id.tvIngresos);
-        tvGastos = view.findViewById(R.id.tvGastos);
+        // Referencias a las vistas del XML
+        tvTotalIngresos = view.findViewById(R.id.tvTotalIngresos);
+        tvTotalGastos = view.findViewById(R.id.tvTotalGastos);
         tvBalanceTotal = view.findViewById(R.id.tvBalanceTotal);
         pieChartIngresos = view.findViewById(R.id.pieChartIngresos);
         pieChartGastos = view.findViewById(R.id.pieChartGastos);
 
+        // Inicializamos el ViewModel
         viewModel = new ViewModelProvider(this).get(TransaccionViewModel.class);
         viewModel.getTransaccionesLiveData().observe(getViewLifecycleOwner(), new Observer<List<Transaccion>>() {
             @Override
             public void onChanged(List<Transaccion> transacciones) {
                 double ingresos = 0.0;
                 double gastos = 0.0;
-
-                // Mapas para acumular totales por categorías
+                // Utilizamos mapas para acumular los totales por categoría (manteniendo la lógica que ya usas)
                 Map<String, Float> ingresosPorCategoria = new HashMap<>();
                 Map<String, Float> gastosPorCategoria = new HashMap<>();
 
-                // Categorías predefinidas para ingresos y gastos
+                // Categorías predefinidas (puedes modificar o extender esta lista según convenga)
                 String[] categoriasIngreso = {"Salario", "Inversión", "Regalo"};
                 String[] categoriasGasto = {"Compras", "Hogar", "Transporte", "Ocio", "Comida"};
 
-                // Inicializamos los mapas con 0
+                // Inicializamos los mapas
                 for (String cat : categoriasIngreso) {
                     ingresosPorCategoria.put(cat, 0f);
                 }
@@ -66,32 +67,24 @@ public class ResumenFinancieroFragment extends Fragment {
                     gastosPorCategoria.put(cat, 0f);
                 }
 
-                // Acumulamos totales y sumas por categoría
+                // Acumulamos totales y actualizamos los mapas según la categoría de cada transacción
                 for (Transaccion t : transacciones) {
                     if (t.getTipo().equalsIgnoreCase("Ingreso")) {
                         ingresos += t.getCantidad();
                         String cat = t.getCategoria();
-                        if (ingresosPorCategoria.containsKey(cat)) {
-                            ingresosPorCategoria.put(cat, ingresosPorCategoria.get(cat) + (float)t.getCantidad());
-                        } else {
-                            // Si la categoría no está predefinida, la añade
-                            ingresosPorCategoria.put(cat, (float)t.getCantidad());
-                        }
+                        float total = ingresosPorCategoria.containsKey(cat) ? ingresosPorCategoria.get(cat) : 0f;
+                        ingresosPorCategoria.put(cat, total + (float)t.getCantidad());
                     } else if (t.getTipo().equalsIgnoreCase("Gasto")) {
                         gastos += t.getCantidad();
                         String cat = t.getCategoria();
-                        if (gastosPorCategoria.containsKey(cat)) {
-                            gastosPorCategoria.put(cat, gastosPorCategoria.get(cat) + (float)t.getCantidad());
-                        } else {
-                            // Si la categoría no está predefinida, la añade
-                            gastosPorCategoria.put(cat, (float)t.getCantidad());
-                        }
+                        float total = gastosPorCategoria.containsKey(cat) ? gastosPorCategoria.get(cat) : 0f;
+                        gastosPorCategoria.put(cat, total + (float)t.getCantidad());
                     }
                 }
 
                 double balance = ingresos - gastos;
-                tvIngresos.setText(String.format(Locale.getDefault(), "Ingresos: %.2f€", ingresos));
-                tvGastos.setText(String.format(Locale.getDefault(), "Gastos: %.2f€", gastos));
+                tvTotalIngresos.setText(String.format(Locale.getDefault(), "Total Ingresos: %.2f€", ingresos));
+                tvTotalGastos.setText(String.format(Locale.getDefault(), "Total Gastos: %.2f€", gastos));
                 tvBalanceTotal.setText(String.format(Locale.getDefault(), "Balance: %.2f€", balance));
 
                 // Actualizamos los gráficos
@@ -106,7 +99,7 @@ public class ResumenFinancieroFragment extends Fragment {
     private void actualizarGrafico(PieChart pieChart, Map<String, Float> datos, String label) {
         List<PieEntry> entradas = new ArrayList<>();
         for (Map.Entry<String, Float> entry : datos.entrySet()) {
-            if (entry.getValue() > 0) { // Sólo añadimos categorías con valores positivos
+            if (entry.getValue() > 0) { // Solo mostramos categorías con valor positivo
                 entradas.add(new PieEntry(entry.getValue(), entry.getKey()));
             }
         }
@@ -115,11 +108,10 @@ public class ResumenFinancieroFragment extends Fragment {
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
 
-        // Opcional: Configurar descripción y animación
+        // Opcional: configurar la animación y desactivar la descripción
         pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
         pieChart.animateY(1000);
-
         pieChart.invalidate();
     }
 }
