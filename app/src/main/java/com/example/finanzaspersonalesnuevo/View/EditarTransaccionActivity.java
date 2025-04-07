@@ -6,14 +6,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.finanzaspersonalesnuevo.Model.Transaccion;
 import com.example.finanzaspersonalesnuevo.R;
 import com.example.finanzaspersonalesnuevo.ViewModel.EditarTransaccionViewModel;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +23,8 @@ public class EditarTransaccionActivity extends AppCompatActivity {
     private Button btnActualizar, btnCancelar;
     private EditarTransaccionViewModel viewModel;
     private int transaccionId; // ID de la transacción a editar
+    private Transaccion currentTransaccion; // Se guarda la transacción actual para actualizarla
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,29 +59,26 @@ public class EditarTransaccionActivity extends AppCompatActivity {
         // Observamos el LiveData para obtener los datos de la transacción
         viewModel.getTransaccionById(transaccionId).observe(this, transaccion -> {
             if (transaccion != null) {
+                currentTransaccion = transaccion;
                 etDescripcion.setText(transaccion.getDescripcion());
                 etCantidad.setText(String.valueOf(transaccion.getCantidad()));
-
-                // Formateamos la fecha
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 etFecha.setText(sdf.format(transaccion.getFecha()));
 
-                // Cargamos las categorías según el tipo
+                // Según el tipo de transacción se cargan las categorías correspondientes
                 String[] categoriasIngreso = {"Salario", "Inversión", "Regalo"};
                 String[] categoriasGasto = {"Compras", "Hogar", "Transporte", "Ocio", "Comida"};
-                String tipo = transaccion.getTipo();
-                if (tipo.equalsIgnoreCase("Ingreso")) {
+                if (transaccion.getTipo().equalsIgnoreCase("Ingreso")) {
                     ArrayAdapter<String> adapterIngreso = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriasIngreso);
                     adapterIngreso.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapterIngreso);
                     spinnerTipo.setSelection(0);
-                } else if (tipo.equalsIgnoreCase("Gasto")) {
+                } else if (transaccion.getTipo().equalsIgnoreCase("Gasto")) {
                     ArrayAdapter<String> adapterGasto = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriasGasto);
                     adapterGasto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapterGasto);
                     spinnerTipo.setSelection(1);
                 }
-                // Seleccionamos la categoría correspondiente
+                // Seleccionamos la categoría que coincide con la transacción
                 for (int i = 0; i < spinnerCategoria.getAdapter().getCount(); i++) {
                     String item = (String) spinnerCategoria.getAdapter().getItem(i);
                     if (item.equalsIgnoreCase(transaccion.getCategoria())) {
@@ -96,7 +92,7 @@ public class EditarTransaccionActivity extends AppCompatActivity {
             }
         });
 
-        // Lógica para el botón Actualizar
+        // Botón Actualizar: actualiza la transacción con los datos ingresados
         btnActualizar.setOnClickListener(v -> {
             String nuevaDescripcion = etDescripcion.getText().toString().trim();
             String nuevaCantidadStr = etCantidad.getText().toString().trim();
@@ -117,7 +113,6 @@ public class EditarTransaccionActivity extends AppCompatActivity {
                 return;
             }
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Date nuevaFecha;
             try {
                 nuevaFecha = sdf.parse(nuevaFechaStr);
@@ -127,17 +122,20 @@ public class EditarTransaccionActivity extends AppCompatActivity {
                 return;
             }
 
-            // Creamos la transacción actualizada con los datos nuevos
-            Transaccion transaccionAEditar = new Transaccion(nuevaDescripcion, nuevaCantidad, nuevaFecha, nuevaCategoria, tipoTransaccion);
-
-            // Llamamos al ViewModel para actualizar la transacción
-            viewModel.actualizarTransaccion(transaccionAEditar);
-
-            Toast.makeText(EditarTransaccionActivity.this, "Transacción actualizada", Toast.LENGTH_SHORT).show();
-            finish();
+            // Actualizamos el objeto actual conservando su ID
+            if (currentTransaccion != null) {
+                currentTransaccion.setDescripcion(nuevaDescripcion);
+                currentTransaccion.setCantidad(nuevaCantidad);
+                currentTransaccion.setFecha(nuevaFecha);
+                currentTransaccion.setCategoria(nuevaCategoria);
+                currentTransaccion.setTipo(tipoTransaccion);
+                viewModel.actualizarTransaccion(currentTransaccion);
+                Toast.makeText(EditarTransaccionActivity.this, "Transacción actualizada", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         });
 
-        // Botón Cancelar: cierra la actividad sin hacer cambios
+        // Botón Cancelar: cierra la actividad sin cambios
         btnCancelar.setOnClickListener(v -> finish());
     }
 }

@@ -8,13 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.finanzaspersonalesnuevo.Model.Transaccion;
 import com.example.finanzaspersonalesnuevo.R;
 import com.example.finanzaspersonalesnuevo.data.AppDatabase;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,36 +47,30 @@ public class NuevaTransaccionActivity extends AppCompatActivity {
         adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipo.setAdapter(adapterTipos);
 
-        // Listener para spinnerTipo: actualiza spinnerCategoria según el tipo seleccionado
+        // Configuramos el listener para spinnerTipo para cambiar dinámicamente las categorías
         spinnerTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) { // Ingreso
                     String[] categoriasIngreso = {"Salario", "Inversión", "Regalo"};
-                    ArrayAdapter<String> adapterIngreso = new ArrayAdapter<>(NuevaTransaccionActivity.this,
-                            android.R.layout.simple_spinner_item, categoriasIngreso);
+                    ArrayAdapter<String> adapterIngreso = new ArrayAdapter<>(NuevaTransaccionActivity.this, android.R.layout.simple_spinner_item, categoriasIngreso);
                     adapterIngreso.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapterIngreso);
                 } else { // Gasto
                     String[] categoriasGasto = {"Compras", "Hogar", "Transporte", "Ocio", "Comida"};
-                    ArrayAdapter<String> adapterGasto = new ArrayAdapter<>(NuevaTransaccionActivity.this,
-                            android.R.layout.simple_spinner_item, categoriasGasto);
+                    ArrayAdapter<String> adapterGasto = new ArrayAdapter<>(NuevaTransaccionActivity.this, android.R.layout.simple_spinner_item, categoriasGasto);
                     adapterGasto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapterGasto);
                 }
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // No se hace nada
-            }
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        // Instancia única de la base de datos
         db = AppDatabase.getInstance(getApplicationContext());
 
         btnGuardar.setOnClickListener(v -> guardarTransaccion());
-        btnCancelar.setOnClickListener(v -> finish()); // Cancela y cierra la actividad
+        btnCancelar.setOnClickListener(v -> finish());
     }
 
     private void guardarTransaccion() {
@@ -111,6 +102,7 @@ public class NuevaTransaccionActivity extends AppCompatActivity {
         }
 
         Transaccion nuevaTransaccion = new Transaccion(descripcion, cantidad, fecha, categoria, tipo);
+
         executor.execute(() -> {
             long id = db.transaccionDao().insertTransaccion(nuevaTransaccion);
             runOnUiThread(() -> {
