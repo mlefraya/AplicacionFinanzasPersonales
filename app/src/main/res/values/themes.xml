@@ -13,6 +13,8 @@
         <!-- Configurar el drawable del cursor -->
         <item name="android:textCursorDrawable">@drawable/cursor_blue</item>
         <!-- Puedes agregar aquí otros atributos personalizados -->
+        <item name="android:colorControlActivated">@color/blue_700</item>
+
     </style>
 
     <!-- Tema de la aplicación -->
