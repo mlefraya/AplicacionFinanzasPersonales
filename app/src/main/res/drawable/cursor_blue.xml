@@ -1,0 +1,6 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Define un color azul para el cursor -->
+    <solid android:color="@color/blue_700" />
+    <!-- Define el ancho del cursor -->
+    <size android:width="2dp" />
+</shape>

@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <!-- Título o Descripción -->
+        <!-- Descripción -->
         <TextView
             android:id="@+id/tvDescripcion"
             android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
             android:textColor="@android:color/holo_green_dark"
             android:layout_marginTop="4dp"/>
 
-        <!-- Contenedor horizontal para fecha y categoría -->
+        <!-- Contenedor horizontal para Fecha y Categoría -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
