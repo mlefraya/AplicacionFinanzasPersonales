@@ -1,22 +1,30 @@
 package com.example.finanzaspersonalesnuevo.View;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import androidx.fragment.app.Fragment;
+
+import androidx.preference.ListPreference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
+import androidx.preference.EditTextPreference;
 import com.example.finanzaspersonalesnuevo.R;
 
-public class ConfiguracionFragment extends Fragment {
-
-    public ConfiguracionFragment() {
-        // Constructor vacío
-    }
-
+public class ConfiguracionFragment extends PreferenceFragmentCompat {
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Infla el layout de configuración (puedes personalizarlo luego)
-        return inflater.inflate(R.layout.fragment_configuracion, container, false);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        // Opcional: reaccionar a cambios inmediatos
+        ListPreference temaPref = findPreference("pref_theme");
+        temaPref.setOnPreferenceChangeListener((pref, newValue) -> {
+            // Aquí podrías aplicar el tema inmediatamente
+            // e.g. AppCompatDelegate.setDefaultNightMode(...)
+            return true;
+        });
+
+        SwitchPreferenceCompat notifPref = findPreference("pref_notifications");
+        notifPref.setOnPreferenceChangeListener((pref, newValue) -> {
+            // Habilitar/deshabilitar notificaciones
+            return true;
+        });
     }
 }

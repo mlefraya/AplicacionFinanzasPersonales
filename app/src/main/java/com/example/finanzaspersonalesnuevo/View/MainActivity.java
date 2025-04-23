@@ -51,14 +51,22 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_resumen_financiero) {
                     selectedFragment = new ResumenFinancieroFragment();
                 } else if (id == R.id.nav_configuracion) {
-                    selectedFragment = new ConfiguracionFragment();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new ConfiguracionFragment())
+                            .addToBackStack(null) // Para poder volver atrás con el botón de atrás
+                            .commit();
+                    drawerLayout.closeDrawers();
+                    return true;
                 }
+
                 if (selectedFragment != null) {
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction()
+                    getSupportFragmentManager()
+                            .beginTransaction()
                             .replace(R.id.fragment_container, selectedFragment)
                             .commit();
                 }
+
                 drawerLayout.closeDrawers();
                 return true;
             }
