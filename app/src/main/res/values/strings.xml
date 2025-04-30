@@ -3,4 +3,8 @@
     <string name="open">Abrir menú</string>
     <string name="close">Cerrar menú</string>
 
+    <!-- Para Exportar Datos -->
+    <string name="nav_exportar_datos">Exportar datos</string>
+    <string name="explica_exportar">Genera un archivo con todo tu historial financiero.</string>
+    <string name="btn_exportar">Exportar ahora</string>
 </resources>

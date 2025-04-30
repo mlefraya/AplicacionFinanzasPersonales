@@ -8,10 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.finanzaspersonalesnuevo.Model.Transaccion;
 import com.example.finanzaspersonalesnuevo.R;
 import com.example.finanzaspersonalesnuevo.data.AppDatabase;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,8 +28,10 @@ public class NuevaTransaccionActivity extends AppCompatActivity {
     private Spinner spinnerTipo, spinnerCategoria;
     private Button btnGuardar, btnCancelar;
     private AppDatabase db;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final SimpleDateFormat sdf =
+            new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private final ExecutorService executor =
+            Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,37 +39,35 @@ public class NuevaTransaccionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nueva_transaccion);
 
         etDescripcion = findViewById(R.id.etDescripcion);
-        etCantidad = findViewById(R.id.etCantidad);
-        etFecha = findViewById(R.id.etFecha);
-        spinnerTipo = findViewById(R.id.spinnerTipo);
+        etCantidad    = findViewById(R.id.etCantidad);
+        etFecha       = findViewById(R.id.etFecha);
+        spinnerTipo   = findViewById(R.id.spinnerTipo);
         spinnerCategoria = findViewById(R.id.spinnerCategoria);
-        btnGuardar = findViewById(R.id.btnGuardar);
-        btnCancelar = findViewById(R.id.btnCancelar);
+        btnGuardar    = findViewById(R.id.btnGuardar);
+        btnCancelar   = findViewById(R.id.btnCancelar);
 
-        // Configuramos el Spinner de tipo (Ingreso o Gasto)
+        // Spinner tipo
         String[] tipos = {"Ingreso", "Gasto"};
-        ArrayAdapter<String> adapterTipos = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tipos);
+        ArrayAdapter<String> adapterTipos =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tipos);
         adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipo.setAdapter(adapterTipos);
 
-        // Configuramos el listener para spinnerTipo para cambiar dinámicamente las categorías
+        // Listener para cambiar categorías según tipo
         spinnerTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) { // Ingreso
-                    String[] categoriasIngreso = {"Salario", "Inversión", "Regalo"};
-                    ArrayAdapter<String> adapterIngreso = new ArrayAdapter<>(NuevaTransaccionActivity.this, android.R.layout.simple_spinner_item, categoriasIngreso);
-                    adapterIngreso.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerCategoria.setAdapter(adapterIngreso);
-                } else { // Gasto
-                    String[] categoriasGasto = {"Compras", "Hogar", "Transporte", "Ocio", "Comida"};
-                    ArrayAdapter<String> adapterGasto = new ArrayAdapter<>(NuevaTransaccionActivity.this, android.R.layout.simple_spinner_item, categoriasGasto);
-                    adapterGasto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerCategoria.setAdapter(adapterGasto);
-                }
+            @Override public void onItemSelected(AdapterView<?> parent, View view,
+                                                 int position, long id) {
+                String[] categorias = position == 0
+                        ? new String[]{"Salario", "Inversión", "Regalo"}
+                        : new String[]{"Compras", "Hogar", "Transporte", "Ocio", "Comida"};
+                ArrayAdapter<String> adapterCat =
+                        new ArrayAdapter<>(NuevaTransaccionActivity.this,
+                                android.R.layout.simple_spinner_item,
+                                categorias);
+                adapterCat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerCategoria.setAdapter(adapterCat);
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
         });
 
         db = AppDatabase.getInstance(getApplicationContext());
@@ -76,12 +79,14 @@ public class NuevaTransaccionActivity extends AppCompatActivity {
     private void guardarTransaccion() {
         String descripcion = etDescripcion.getText().toString().trim();
         String cantidadStr = etCantidad.getText().toString().trim();
-        String fechaStr = etFecha.getText().toString().trim();
-        String tipo = (String) spinnerTipo.getSelectedItem();
-        String categoria = (String) spinnerCategoria.getSelectedItem();
+        String fechaStr    = etFecha.getText().toString().trim();
+        String tipo        = (String) spinnerTipo.getSelectedItem();
+        String categoria   = (String) spinnerCategoria.getSelectedItem();
 
-        if (descripcion.isEmpty() || cantidadStr.isEmpty() || fechaStr.isEmpty() || tipo == null || categoria == null) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+        if (descripcion.isEmpty() || cantidadStr.isEmpty() || fechaStr.isEmpty()
+                || tipo == null || categoria == null) {
+            Toast.makeText(this, "Por favor, completa todos los campos",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -97,20 +102,23 @@ public class NuevaTransaccionActivity extends AppCompatActivity {
         try {
             fecha = sdf.parse(fechaStr);
         } catch (ParseException e) {
-            Toast.makeText(this, "Error en el formato de fecha. Usa dd/MM/yyyy", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Formato fecha incorrecto (dd/MM/yyyy)",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Transaccion nuevaTransaccion = new Transaccion(descripcion, cantidad, fecha, categoria, tipo);
+        Transaccion t = new Transaccion(descripcion, cantidad, fecha, categoria, tipo);
 
         executor.execute(() -> {
-            long id = db.transaccionDao().insertTransaccion(nuevaTransaccion);
+            long id = db.transaccionDao().insertTransaccion(t);
             runOnUiThread(() -> {
                 if (id != -1) {
-                    Toast.makeText(NuevaTransaccionActivity.this, "Transacción guardada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Transacción guardada",
+                            Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(NuevaTransaccionActivity.this, "Error al guardar la transacción", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error al guardar la transacción",
+                            Toast.LENGTH_SHORT).show();
                 }
             });
         });

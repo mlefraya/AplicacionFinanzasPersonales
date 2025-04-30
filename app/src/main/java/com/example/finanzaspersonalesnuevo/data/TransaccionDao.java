@@ -14,17 +14,21 @@ import java.util.List;
 @Dao
 public interface TransaccionDao {
 
+    // Ahora devuelve el id de la transacción insertada
     @Insert
     long insertTransaccion(Transaccion transaccion);
 
     @Update
-    int updateTransaccion(Transaccion transaccion);
+    void updateTransaccion(Transaccion transaccion);
 
     @Delete
     void deleteTransaccion(Transaccion transaccion);
 
     @Query("SELECT * FROM transaccion ORDER BY fecha DESC")
     LiveData<List<Transaccion>> getAllTransacciones();
+
+    @Query("SELECT * FROM transaccion ORDER BY fecha DESC")
+    List<Transaccion> getAllSync();
 
     @Query("SELECT * FROM transaccion WHERE categoria = :categoria ORDER BY fecha DESC")
     LiveData<List<Transaccion>> getTransaccionesByCategoria(String categoria);

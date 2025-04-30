@@ -2,15 +2,19 @@ package com.example.finanzaspersonalesnuevo.View;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+
 import com.example.finanzaspersonalesnuevo.R;
 import com.google.android.material.navigation.NavigationView;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
+
+// Import del nuevo fragment
+import com.example.finanzaspersonalesnuevo.View.ExportarDatosFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,56 +24,52 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // Layout con DrawerLayout
+        setContentView(R.layout.activity_main);
 
-        // Configura el Toolbar y establécelo como ActionBar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.navigation_view);
 
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
+        toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.open, R.string.close
+        );
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Habilita el botón de navegación (hamburguesa)
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment selectedFragment = null;
-                int id = item.getItemId();
-                if (id == R.id.nav_listado_transacciones) {
-                    selectedFragment = new ListadoTransaccionesFragment();
-                } else if (id == R.id.nav_objetivos_ahorro) {
-                    selectedFragment = new ObjetivosAhorroFragment();
-                } else if (id == R.id.nav_resumen_financiero) {
-                    selectedFragment = new ResumenFinancieroFragment();
-                } else if (id == R.id.nav_configuracion) {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, new ConfiguracionFragment())
-                            .addToBackStack(null) // Para poder volver atrás con el botón de atrás
-                            .commit();
-                    drawerLayout.closeDrawers();
-                    return true;
-                }
+        navigationView.setNavigationItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+            int id = item.getItemId();
 
-                if (selectedFragment != null) {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, selectedFragment)
-                            .commit();
-                }
-
-                drawerLayout.closeDrawers();
-                return true;
+            if (id == R.id.nav_listado_transacciones) {
+                selectedFragment = new ListadoTransaccionesFragment();
+            } else if (id == R.id.nav_objetivos_ahorro) {
+                selectedFragment = new ObjetivosAhorroFragment();
+            } else if (id == R.id.nav_resumen_financiero) {
+                selectedFragment = new ResumenFinancieroFragment();
+            } else if (id == R.id.nav_configuracion) {
+                selectedFragment = new ConfiguracionFragment();
+            } else if (id == R.id.nav_exportar_datos) {
+                selectedFragment = new ExportarDatosFragment();
             }
+
+            if (selectedFragment != null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, selectedFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+
+            drawerLayout.closeDrawers();
+            return true;
         });
     }
 
