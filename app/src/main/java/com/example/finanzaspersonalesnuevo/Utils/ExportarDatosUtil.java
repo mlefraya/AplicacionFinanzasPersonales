@@ -2,6 +2,8 @@ package com.example.finanzaspersonalesnuevo.Utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.finanzaspersonalesnuevo.Model.Transaccion;
@@ -11,62 +13,76 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ExportarDatosUtil {
 
+    private static final String TAG = "ExportarDatosUtil";
+
     /**
-     * Inicia la exportación en segundo plano.
+     * Exporta todas las transacciones a un CSV en la carpeta pública Download.
      */
     public static void exportar(Context ctx) {
-        new ExportTask(ctx).execute();
-    }
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    // Directorio público Descargas
+                    File dir = Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS);
+                    if (!dir.exists() && !dir.mkdirs()) {
+                        Log.e(TAG, "No se pudo crear la carpeta Download");
+                    }
 
-    private static class ExportTask extends AsyncTask<Void, Void, String> {
-        private Context context;
+                    // Nombre de archivo con timestamp
+                    String ts = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                            .format(new Date());
+                    File file = new File(dir, "finanzas_export_" + ts + ".csv");
+                    Log.d(TAG, "Escribiendo CSV en: " + file.getAbsolutePath());
 
-        ExportTask(Context ctx) {
-            // Utiliza el contexto de aplicación para evitar fugas de memoria
-            this.context = ctx.getApplicationContext();
-        }
+                    // Lee todas las transacciones
+                    List<Transaccion> all = AppDatabase.getInstance(ctx)
+                            .transaccionDao().getAllSync();
+                    Log.d(TAG, "Transacciones obtenidas: " + all.size());
 
-        @Override
-        protected String doInBackground(Void... voids) {
-            List<Transaccion> transacciones = AppDatabase
-                    .getInstance(context)
-                    .transaccionDao()
-                    .getAllSync();
+                    // Construye el contenido CSV
+                    StringBuilder csv = new StringBuilder();
+                    csv.append("fecha,tipo,categoria,descripcion,cantidad\n");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    for (Transaccion t : all) {
+                        csv.append(sdf.format(t.getFecha())).append(",")
+                                .append(t.getTipo()).append(",")
+                                .append(t.getCategoria()).append(",")
+                                .append(t.getDescripcion()).append(",")
+                                .append(t.getCantidad()).append("\n");
+                    }
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            StringBuilder csv = new StringBuilder();
-            csv.append("fecha,tipo,categoria,descripcion,cantidad\n");
-
-            for (Transaccion t : transacciones) {
-                String fecha = sdf.format(t.getFecha());
-                csv.append(fecha).append(",")
-                        .append(t.getTipo()).append(",")
-                        .append(t.getCategoria()).append(",")
-                        .append(t.getDescripcion()).append(",")
-                        .append(t.getCantidad()).append("\n");
+                    // Escribe el fichero
+                    try (FileOutputStream fos = new FileOutputStream(file)) {
+                        fos.write(csv.toString().getBytes());
+                        Log.d(TAG, "CSV escrito con éxito");
+                        return file.getAbsolutePath();
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "Error escribiendo CSV", e);
+                    return null;
+                }
             }
 
-            File file = new File(context.getExternalFilesDir(null), "finanzas_export.csv");
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                fos.write(csv.toString().getBytes());
-                return file.getAbsolutePath();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+            @Override
+            protected void onPostExecute(String path) {
+                if (path != null) {
+                    Toast.makeText(ctx,
+                            "✅ Exportación completada:\n" + path,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(ctx,
+                            "❌ Error exportando CSV",
+                            Toast.LENGTH_LONG).show();
+                }
             }
-        }
-
-        @Override
-        protected void onPostExecute(String path) {
-            if (path != null) {
-                Toast.makeText(context, "Exportado a: " + path, Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(context, "Error al exportar", Toast.LENGTH_LONG).show();
-            }
-        }
+        }.execute();
     }
 }
