@@ -26,8 +26,8 @@ public class ExportarDatosFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_exportar_datos, container, false);
 
         root.findViewById(R.id.btn_exportar).setOnClickListener(v -> {
-            Log.d(TAG, "Botón exportar presionado");
-            Toast.makeText(requireContext(), "Iniciando exportación...", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Exportar iniciado");
+            Toast.makeText(requireContext(), "Exportación en curso…", Toast.LENGTH_SHORT).show();
             ExportarDatosUtil.exportar(requireContext());
         });
 

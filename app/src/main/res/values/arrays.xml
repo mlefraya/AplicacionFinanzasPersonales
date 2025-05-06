@@ -1,12 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_theme_entries">
+    <!-- Opciones de tema, ya existentes -->
+    <string-array name="theme_entries">
         <item>Claro</item>
         <item>Oscuro</item>
-        <item>Sistema</item>
     </string-array>
-    <string-array name="pref_theme_values">
+    <string-array name="theme_values">
         <item>light</item>
         <item>dark</item>
-        <item>system</item>
+    </string-array>
+
+    <!-- Monedas ampliadas -->
+    <string-array name="currency_entries">
+        <item>Euro (€)</item>
+        <item>Dólar USA (USD $)</item>
+        <item>Libra Esterlina (GBP £)</item>
+        <item>Yen Japonés (JPY ¥)</item>
+        <item>Franco Suizo (CHF)</item>
+        <item>Dólar Canadiense (CAD $)</item>
+        <item>Dólar Australiano (AUD $)</item>
+        <item>Yuan Chino (CNY ¥)</item>
+        <item>Rupia India (INR ₹)</item>
+        <item>Real Brasileño (BRL R$)</item>
+        <item>Rublo Ruso (RUB ₽)</item>
+        <item>Peso Mexicano (MXN $)</item>
+        <item>Dólar Singapur (SGD $)</item>
+        <item>Dólar Neozelandés (NZD $)</item>
+        <item>Corona Sueca (SEK kr)</item>
+        <item>Corona Noruega (NOK kr)</item>
+        <item>Won Surcoreano (KRW ₩)</item>
+        <item>Peso Argentino (ARS $)</item>
+        <item>Rand Sudafricano (ZAR R)</item>
+    </string-array>
+    <string-array name="currency_values">
+        <item>EUR</item>
+        <item>USD</item>
+        <item>GBP</item>
+        <item>JPY</item>
+        <item>CHF</item>
+        <item>CAD</item>
+        <item>AUD</item>
+        <item>CNY</item>
+        <item>INR</item>
+        <item>BRL</item>
+        <item>RUB</item>
+        <item>MXN</item>
+        <item>SGD</item>
+        <item>NZD</item>
+        <item>SEK</item>
+        <item>NOK</item>
+        <item>KRW</item>
+        <item>ARS</item>
+        <item>ZAR</item>
     </string-array>
 </resources>

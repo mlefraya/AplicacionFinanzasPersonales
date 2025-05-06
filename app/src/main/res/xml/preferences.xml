@@ -6,25 +6,26 @@
     <ListPreference
         android:key="pref_theme"
         android:title="Tema de la aplicación"
-        android:entries="@array/pref_theme_entries"
-        android:entryValues="@array/pref_theme_values"
+        android:entries="@array/theme_entries"
+        android:entryValues="@array/theme_values"
         android:defaultValue="light"
-        android:summary="%s" />
+        android:summary="%s"/>
 
-    <!-- Notificaciones -->
+    <!-- Notificaciones On/Off -->
     <SwitchPreferenceCompat
         android:key="pref_notifications"
         android:title="Notificaciones"
-        android:defaultValue="true"
-        android:summaryOn="Activadas"
-        android:summaryOff="Desactivadas"/>
+        android:defaultValue="false"
+        android:summaryOff="Desactivadas"
+        android:summaryOn="Activadas" />
 
     <!-- Moneda por defecto -->
-    <EditTextPreference
+    <ListPreference
         android:key="pref_currency"
-        android:title="Moneda por defecto"
-        android:dialogTitle="Introduce tu moneda"
-        android:defaultValue="€"
-        android:summary="%s"/>
+        android:title="Moneda predeterminada"
+        android:entries="@array/currency_entries"
+        android:entryValues="@array/currency_values"
+        android:defaultValue="EUR"
+        android:summary="%s" />
 
 </PreferenceScreen>

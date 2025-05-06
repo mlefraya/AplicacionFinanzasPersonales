@@ -24,7 +24,8 @@
             android:text="Descripción"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             android:textStyle="bold"
-            android:textColor="@android:color/black"/>
+
+        android:textColor="?attr/colorOnSurface"/>
 
         <!-- Monto -->
         <TextView
@@ -49,7 +50,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Fecha"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"/>
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:textColor="?attr/colorOnSurfaceVariant"/>
 
             <TextView
                 android:id="@+id/tvCategoria"

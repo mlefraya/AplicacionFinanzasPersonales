@@ -33,17 +33,16 @@ public class ExportarDatosUtil {
                     File dir = Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_DOWNLOADS);
                     if (!dir.exists() && !dir.mkdirs()) {
-                        Log.e(TAG, "No se pudo crear la carpeta Download");
+                        Log.e(TAG, "No se pudo crear Download");
                     }
 
                     String ts = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
                             .format(new Date());
                     File file = new File(dir, "finanzas_export_" + ts + ".csv");
-                    Log.d(TAG, "Escribiendo CSV en: " + file.getAbsolutePath());
+                    Log.d(TAG, "Guardando CSV en: " + file.getAbsolutePath());
 
                     List<Transaccion> all = AppDatabase.getInstance(ctx)
                             .transaccionDao().getAllSync();
-                    Log.d(TAG, "Transacciones obtenidas: " + all.size());
 
                     StringBuilder csv = new StringBuilder();
                     csv.append("fecha,tipo,categoria,descripcion,cantidad\n");
@@ -58,10 +57,11 @@ public class ExportarDatosUtil {
 
                     try (FileOutputStream fos = new FileOutputStream(file)) {
                         fos.write(csv.toString().getBytes());
+                        Log.d(TAG, "CSV escrito correctamente");
                         return file;
                     }
                 } catch (IOException e) {
-                    Log.e(TAG, "Error escribiendo CSV", e);
+                    Log.e(TAG, "Error al escribir CSV", e);
                     return null;
                 }
             }
@@ -69,10 +69,15 @@ public class ExportarDatosUtil {
             @Override
             protected void onPostExecute(File file) {
                 if (file != null) {
-                    Toast.makeText(ctx, "✅ Exportación completada:\n" + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                    String path = file.getAbsolutePath();
+                    Toast.makeText(ctx,
+                            "✓ Exportado: " + file.getName(),
+                            Toast.LENGTH_LONG).show();
                     abrirCSV(ctx, file);
                 } else {
-                    Toast.makeText(ctx, "❌ Error exportando CSV", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ctx,
+                            "⚠️ Error al exportar",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         }.execute();
@@ -81,15 +86,18 @@ public class ExportarDatosUtil {
     private static void abrirCSV(Context ctx, File file) {
         try {
             Uri uri = FileProvider.getUriForFile(ctx,
-                    ctx.getPackageName() + ".fileprovider",
-                    file);
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(uri, "text/csv");
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            ctx.startActivity(Intent.createChooser(intent, "Abrir archivo CSV con..."));
+                    ctx.getPackageName() + ".fileprovider", file);
+
+            Intent open = new Intent(Intent.ACTION_VIEW);
+            open.setDataAndType(uri, "text/csv");
+            open.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            ctx.startActivity(Intent.createChooser(open, "Abrir con…"));
         } catch (Exception e) {
-            Log.e(TAG, "No se pudo abrir el archivo", e);
-            Toast.makeText(ctx, "No se pudo abrir el archivo. Intenta abrirlo desde Descargas.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "No se pudo abrir CSV", e);
+            Toast.makeText(ctx,
+                    "No se pudo abrir el archivo.",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 }
