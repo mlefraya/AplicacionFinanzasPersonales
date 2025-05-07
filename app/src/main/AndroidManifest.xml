@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.finanzaspersonalesnuevo">
 
-    <!-- Permiso para escribir en Descargas -->
+    <!-- Permisos para exportar a Descargas -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
-    <!-- Permisos necesarios para exportar a Descargas -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <!-- Para Android 10+ usar el almacenamiento legado (si targetSdk <=29) -->
     <application
+        android:name=".app.App"
         android:allowBackup="true"
         android:requestLegacyExternalStorage="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -22,7 +20,7 @@
         android:theme="@style/Theme.FinanzasPersonalesNuevo"
         tools:targetApi="31">
 
-        <!-- Actividad principal: MainActivity (contendrá el Navigation Drawer y los fragmentos) -->
+        <!-- MainActivity -->
         <activity
             android:name=".View.MainActivity"
             android:exported="true">
@@ -32,11 +30,11 @@
             </intent-filter>
         </activity>
 
-        <!-- Actividad para agregar transacciones -->
+        <!-- Otras Activities -->
         <activity android:name=".View.NuevaTransaccionActivity" />
-
-        <!-- Actividad para editar transacciones -->
         <activity android:name=".View.EditarTransaccionActivity" />
+
+        <!-- FileProvider para exportación -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

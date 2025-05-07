@@ -13,9 +13,6 @@ import androidx.fragment.app.Fragment;
 import com.example.finanzaspersonalesnuevo.R;
 import com.google.android.material.navigation.NavigationView;
 
-// Import del nuevo fragment
-import com.example.finanzaspersonalesnuevo.View.ExportarDatosFragment;
-
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
@@ -26,28 +23,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Toolbar y Drawer
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.navigation_view);
 
-        toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar,
-                R.string.open, R.string.close
-        );
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.open, R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
+        // **Aquí cargamos el fragment por defecto** sólo la primera vez
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new ListadoTransaccionesFragment())
+                    .commit();
+            navigationView.setCheckedItem(R.id.nav_listado_transacciones);
+        }
+
+        // Listener del menú lateral
         navigationView.setNavigationItemSelectedListener(item -> {
             Fragment selectedFragment = null;
             int id = item.getItemId();
-
             if (id == R.id.nav_listado_transacciones) {
                 selectedFragment = new ListadoTransaccionesFragment();
             } else if (id == R.id.nav_objetivos_ahorro) {
