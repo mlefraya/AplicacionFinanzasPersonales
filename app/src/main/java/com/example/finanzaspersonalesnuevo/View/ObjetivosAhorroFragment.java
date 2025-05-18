@@ -1,12 +1,10 @@
 package com.example.finanzaspersonalesnuevo.View;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,9 +19,10 @@ import com.example.finanzaspersonalesnuevo.R;
 import com.example.finanzaspersonalesnuevo.ViewModel.BalanceViewModel;
 import com.example.finanzaspersonalesnuevo.ViewModel.ObjetivoAhorroViewModel;
 import com.example.finanzaspersonalesnuevo.adapter.ObjetivoAhorroAdapter;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.List;
 import java.util.Locale;
 
 public class ObjetivosAhorroFragment extends Fragment {
@@ -49,27 +48,26 @@ public class ObjetivosAhorroFragment extends Fragment {
 
         // ViewModels
         objetivoVm = new ViewModelProvider(this).get(ObjetivoAhorroViewModel.class);
-        balanceVm  = new ViewModelProvider(this).get(BalanceViewModel.class);
+        balanceVm = new ViewModelProvider(this).get(BalanceViewModel.class);
 
-        // 1) Observa balance para actualizar progreso
+        // Observa balance para actualizar progreso
         balanceVm.getBalance().observe(getViewLifecycleOwner(), balance -> {
             currentBalance = balance;
             adapter.setBalance(balance);
         });
 
-        // 2) Observa objetivos
+        // Observa objetivos
         objetivoVm.getTodosObjetivos().observe(getViewLifecycleOwner(), objetivos -> {
             adapter.setItems(objetivos);
         });
 
-        // 3) Clicks de editar y eliminar
+        // Clicks de editar y eliminar
         adapter.setOnItemClickListener(this::showEditDialog);
         adapter.setOnItemLongClickListener(this::showDeleteConfirmation);
 
-        // 4) FAB para añadir nuevo objetivo
+        // FAB para añadir nuevo objetivo
         FloatingActionButton fab = root.findViewById(R.id.fab_add_objetivo);
         fab.setOnClickListener(v -> {
-            // Navegar al fragmento de creación de objetivo
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, new ObjetivoAhorroView())
@@ -81,18 +79,20 @@ public class ObjetivosAhorroFragment extends Fragment {
     }
 
     private void showEditDialog(ObjetivoAhorro obj) {
+        // Infla el layout personalizado sin título
         View form = LayoutInflater.from(requireContext())
                 .inflate(R.layout.dialog_editar_objetivo, null, false);
-        EditText etDesc = form.findViewById(R.id.etDescObjetivo);
-        EditText etMeta = form.findViewById(R.id.etMetaObjetivo);
+
+        TextInputEditText etDesc = form.findViewById(R.id.etDescObjetivo);
+        TextInputEditText etMeta = form.findViewById(R.id.etMetaObjetivo);
+
         etDesc.setText(obj.getDescripcion());
         etMeta.setText(String.valueOf(obj.getMontoObjetivo()));
         etMeta.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Editar objetivo")
+        new MaterialAlertDialogBuilder(requireContext()) // sin estilo adicional
                 .setView(form)
-                .setPositiveButton("Guardar", (d, w) -> {
+                .setPositiveButton("Guardar", (dialog, which) -> {
                     String nuevaDesc = etDesc.getText().toString().trim();
                     double nuevaMeta;
                     try {
@@ -110,7 +110,7 @@ public class ObjetivosAhorroFragment extends Fragment {
     }
 
     private void showDeleteConfirmation(ObjetivoAhorro obj) {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Eliminar objetivo")
                 .setMessage(String.format(Locale.getDefault(),
                         "¿Eliminar \"%s\"?", obj.getDescripcion()))
