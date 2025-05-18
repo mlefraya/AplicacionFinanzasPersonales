@@ -1,98 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <!-- RecyclerView para la lista de objetivos -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewObjetivos"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <!-- Botón flotante para añadir un nuevo objetivo -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_objetivo"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:contentDescription="Añadir objetivo"
+        android:src="@android:drawable/ic_input_add"
+        app:layout_anchor="@id/recyclerViewObjetivos"
+        app:layout_anchorGravity="bottom|end"
+        android:layout_margin="16dp"/>
 
-        <!-- Contenedor para la entrada de datos con MaterialCardView -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
-
-                <!-- Campo para la descripción del objetivo -->
-                <EditText
-                    android:id="@+id/etDescripcion"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:hint="Descripción del objetivo"
-                    android:textSize="16sp"
-                    android:padding="12dp" />
-
-                <!-- Campo para el monto objetivo -->
-                <EditText
-                    android:id="@+id/etMontoObjetivo"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:hint="Monto objetivo"
-                    android:inputType="numberDecimal"
-                    android:textSize="16sp"
-                    android:padding="12dp"
-                    android:layout_marginTop="8dp" />
-
-                <!-- Campo para el monto ahorrado actual -->
-                <EditText
-                    android:id="@+id/etMontoActual"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:hint="Monto ahorrado actual"
-                    android:inputType="numberDecimal"
-                    android:textSize="16sp"
-                    android:padding="12dp"
-                    android:layout_marginTop="8dp" />
-
-                <!-- Campo para la fecha de inicio -->
-                <EditText
-                    android:id="@+id/etFechaInicio"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:hint="Fecha inicio (dd/MM/yyyy)"
-                    android:textSize="16sp"
-                    android:padding="12dp"
-                    android:layout_marginTop="8dp" />
-
-                <!-- Campo para la fecha de fin -->
-                <EditText
-                    android:id="@+id/etFechaFin"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:hint="Fecha fin (dd/MM/yyyy)"
-                    android:textSize="16sp"
-                    android:padding="12dp"
-                    android:layout_marginTop="8dp" />
-
-                <!-- Botón para guardar el objetivo -->
-                <Button
-                    android:id="@+id/btnGuardarObjetivo"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:text="Guardar Objetivo"
-                    android:layout_marginTop="16dp" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- RecyclerView para mostrar la lista de objetivos -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewObjetivos"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginTop="24dp" />
-
-    </LinearLayout>
-</ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

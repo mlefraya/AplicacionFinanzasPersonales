@@ -3,54 +3,36 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
     android:orientation="vertical"
-    android:background="@drawable/borde_item">
+    android:padding="12dp"
+    android:background="@drawable/borde_item"
+    android:layout_margin="4dp">
 
+    <!-- Descripción del objetivo -->
     <TextView
         android:id="@+id/txtNombreObjetivo"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Descripción"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textSize="16sp"/>
 
+    <!-- Monto meta -->
     <TextView
         android:id="@+id/txtMontoObjetivo"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Meta: 0.00€"
-        android:textSize="16sp"/>
+        android:text="Meta: 0.00"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"/>
 
-    <TextView
-        android:id="@+id/txtMontoActual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ahorrado: 0.00€"
-        android:textSize="16sp"/>
-
-    <TextView
-        android:id="@+id/txtFechaInicio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Inicio: dd/MM/yyyy"
-        android:textSize="14sp"/>
-
-    <TextView
-        android:id="@+id/txtFechaFin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fin: dd/MM/yyyy"
-        android:textSize="14sp"/>
-
+    <!-- ProgressBar horizontal -->
     <ProgressBar
         android:id="@+id/progresoAhorro"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="8dp"
         android:max="100"
         android:progress="0"
-        android:progressTint="@color/blue_700"
-        android:progressBackgroundTint="@color/gray"
         android:layout_marginTop="8dp"/>
 </LinearLayout>

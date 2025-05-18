@@ -1,132 +1,125 @@
 package com.example.finanzaspersonalesnuevo.View;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.finanzaspersonalesnuevo.Model.ObjetivoAhorro;
 import com.example.finanzaspersonalesnuevo.R;
+import com.example.finanzaspersonalesnuevo.ViewModel.BalanceViewModel;
 import com.example.finanzaspersonalesnuevo.ViewModel.ObjetivoAhorroViewModel;
 import com.example.finanzaspersonalesnuevo.adapter.ObjetivoAhorroAdapter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 import java.util.Locale;
 
 public class ObjetivosAhorroFragment extends Fragment {
 
-    private EditText etDescripcion, etMontoObjetivo, etMontoActual, etFechaInicio, etFechaFin;
-    private Button btnGuardarObjetivo;
-    private RecyclerView recyclerView;
+    private ObjetivoAhorroViewModel objetivoVm;
+    private BalanceViewModel balanceVm;
     private ObjetivoAhorroAdapter adapter;
-    private ObjetivoAhorroViewModel viewModel;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private RecyclerView recyclerView;
+    private double currentBalance = 0.0;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_objetivos_ahorro, container, false);
-        inicializarVistas(view);
-        configurarRecyclerView();
-        configurarViewModel();
-        configurarBotonGuardar();
-        return view;
-    }
+        View root = inflater.inflate(R.layout.fragment_objetivos_ahorro, container, false);
 
-    private void inicializarVistas(View view) {
-        etDescripcion = view.findViewById(R.id.etDescripcion);
-        etMontoObjetivo = view.findViewById(R.id.etMontoObjetivo);
-        etMontoActual = view.findViewById(R.id.etMontoActual);
-        etFechaInicio = view.findViewById(R.id.etFechaInicio);
-        etFechaFin = view.findViewById(R.id.etFechaFin);
-        btnGuardarObjetivo = view.findViewById(R.id.btnGuardarObjetivo);
-        recyclerView = view.findViewById(R.id.recyclerViewObjetivos);
-    }
-
-    private void configurarRecyclerView() {
+        // RecyclerView y Adapter
+        recyclerView = root.findViewById(R.id.recyclerViewObjetivos);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new ObjetivoAhorroAdapter(new ArrayList<>());
+        adapter = new ObjetivoAhorroAdapter();
         recyclerView.setAdapter(adapter);
-    }
 
-    private void configurarViewModel() {
-        viewModel = new ViewModelProvider(this).get(ObjetivoAhorroViewModel.class);
-        viewModel.getTodosObjetivos().observe(getViewLifecycleOwner(), objetivos -> {
-            if (objetivos != null) {
-                adapter.actualizarLista(objetivos);
-            }
+        // ViewModels
+        objetivoVm = new ViewModelProvider(this).get(ObjetivoAhorroViewModel.class);
+        balanceVm  = new ViewModelProvider(this).get(BalanceViewModel.class);
+
+        // 1) Observa balance para actualizar progreso
+        balanceVm.getBalance().observe(getViewLifecycleOwner(), balance -> {
+            currentBalance = balance;
+            adapter.setBalance(balance);
         });
-    }
 
-    private void configurarBotonGuardar() {
-        btnGuardarObjetivo.setOnClickListener(v -> {
-            if (validarCampos()) guardarObjetivo();
+        // 2) Observa objetivos
+        objetivoVm.getTodosObjetivos().observe(getViewLifecycleOwner(), objetivos -> {
+            adapter.setItems(objetivos);
         });
+
+        // 3) Clicks de editar y eliminar
+        adapter.setOnItemClickListener(this::showEditDialog);
+        adapter.setOnItemLongClickListener(this::showDeleteConfirmation);
+
+        // 4) FAB para añadir nuevo objetivo
+        FloatingActionButton fab = root.findViewById(R.id.fab_add_objetivo);
+        fab.setOnClickListener(v -> {
+            // Navegar al fragmento de creación de objetivo
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new ObjetivoAhorroView())
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        return root;
     }
 
-    private boolean validarCampos() {
-        if (etDescripcion.getText().toString().trim().isEmpty() ||
-                etMontoObjetivo.getText().toString().trim().isEmpty() ||
-                etMontoActual.getText().toString().trim().isEmpty() ||
-                etFechaInicio.getText().toString().trim().isEmpty() ||
-                etFechaFin.getText().toString().trim().isEmpty()) {
+    private void showEditDialog(ObjetivoAhorro obj) {
+        View form = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_editar_objetivo, null, false);
+        EditText etDesc = form.findViewById(R.id.etDescObjetivo);
+        EditText etMeta = form.findViewById(R.id.etMetaObjetivo);
+        etDesc.setText(obj.getDescripcion());
+        etMeta.setText(String.valueOf(obj.getMontoObjetivo()));
+        etMeta.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
-            mostrarToast("¡Complete todos los campos!");
-            return false;
-        }
-        return true;
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Editar objetivo")
+                .setView(form)
+                .setPositiveButton("Guardar", (d, w) -> {
+                    String nuevaDesc = etDesc.getText().toString().trim();
+                    double nuevaMeta;
+                    try {
+                        nuevaMeta = Double.parseDouble(etMeta.getText().toString());
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(requireContext(), "Meta inválida", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    obj.setDescripcion(nuevaDesc);
+                    obj.setMontoObjetivo(nuevaMeta);
+                    objetivoVm.actualizar(obj);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
-    private void guardarObjetivo() {
-        try {
-            String descripcion = etDescripcion.getText().toString().trim();
-            double montoObjetivo = Double.parseDouble(etMontoObjetivo.getText().toString());
-            double montoActual = Double.parseDouble(etMontoActual.getText().toString());
-            Date fechaInicio = sdf.parse(etFechaInicio.getText().toString());
-            Date fechaFin = sdf.parse(etFechaFin.getText().toString());
-
-            if (fechaFin.before(fechaInicio)) {
-                mostrarToast("La fecha final debe ser posterior a la inicial");
-                return;
-            }
-
-            ObjetivoAhorro nuevoObjetivo = new ObjetivoAhorro(
-                    descripcion,
-                    montoObjetivo,
-                    montoActual,
-                    fechaInicio,
-                    fechaFin
-            );
-
-            viewModel.insertar(nuevoObjetivo);
-            limpiarCampos();
-            mostrarToast("Objetivo guardado exitosamente");
-
-        } catch (NumberFormatException | ParseException e) {
-            mostrarToast("Error en formato de datos");
-        }
-    }
-
-    private void limpiarCampos() {
-        etDescripcion.setText("");
-        etMontoObjetivo.setText("");
-        etMontoActual.setText("");
-        etFechaInicio.setText("");
-        etFechaFin.setText("");
-    }
-
-    private void mostrarToast(String mensaje) {
-        Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show();
+    private void showDeleteConfirmation(ObjetivoAhorro obj) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Eliminar objetivo")
+                .setMessage(String.format(Locale.getDefault(),
+                        "¿Eliminar \"%s\"?", obj.getDescripcion()))
+                .setPositiveButton("Sí", (d, w) -> {
+                    objetivoVm.eliminar(obj);
+                    Toast.makeText(requireContext(),
+                            "Objetivo eliminado", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 }
