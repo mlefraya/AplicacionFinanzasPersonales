@@ -12,12 +12,7 @@
         android:summary="%s"/>
 
     <!-- Notificaciones On/Off -->
-    <SwitchPreferenceCompat
-        android:key="pref_notifications"
-        android:title="Notificaciones"
-        android:defaultValue="false"
-        android:summaryOff="Desactivadas"
-        android:summaryOn="Activadas" />
+
 
     <!-- Moneda por defecto -->
     <ListPreference
