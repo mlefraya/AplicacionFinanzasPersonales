@@ -1,5 +1,8 @@
 package com.example.finanzaspersonalesnuevo.adapter;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finanzaspersonalesnuevo.Model.ObjetivoAhorro;
@@ -21,6 +25,7 @@ public class ObjetivoAhorroAdapter extends RecyclerView.Adapter<ObjetivoAhorroAd
     public interface OnItemClickListener {
         void onItemClicked(ObjetivoAhorro objetivo);
     }
+
     public interface OnItemLongClickListener {
         void onItemLongClicked(ObjetivoAhorro objetivo);
     }
@@ -29,6 +34,11 @@ public class ObjetivoAhorroAdapter extends RecyclerView.Adapter<ObjetivoAhorroAd
     private double balance = 0;
     private OnItemClickListener clickListener;
     private OnItemLongClickListener longClickListener;
+    private Context context;
+
+    public ObjetivoAhorroAdapter(Context context) {
+        this.context = context;
+    }
 
     public void setItems(List<ObjetivoAhorro> list) {
         this.items = list != null ? list : new ArrayList<>();
@@ -43,6 +53,7 @@ public class ObjetivoAhorroAdapter extends RecyclerView.Adapter<ObjetivoAhorroAd
     public void setOnItemClickListener(OnItemClickListener l) {
         clickListener = l;
     }
+
     public void setOnItemLongClickListener(OnItemLongClickListener l) {
         longClickListener = l;
     }
@@ -59,20 +70,27 @@ public class ObjetivoAhorroAdapter extends RecyclerView.Adapter<ObjetivoAhorroAd
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         ObjetivoAhorro o = items.get(pos);
         h.txtNombre.setText(o.getDescripcion());
-        h.txtMontoObjetivo.setText(String.format(Locale.getDefault(),
-                "Meta: %.2f", o.getMontoObjetivo()));
-        // progreso dinámico: porcentaje de balance sobre meta
-        double pct = o.getMontoObjetivo() == 0
-                ? 0
-                : (balance / o.getMontoObjetivo()) * 100;
+        h.txtMontoObjetivo.setText(String.format(Locale.getDefault(), "Meta: %.2f €", o.getMontoObjetivo()));
+
+        double pct = o.getMontoObjetivo() == 0 ? 0 : (balance / o.getMontoObjetivo()) * 100;
         h.progressBar.setProgress((int) Math.min(pct, 100));
+
+        // Cambiar color a azul (blue_700)
+        int azul = ContextCompat.getColor(context, R.color.blue_700);
+        h.progressBar.getProgressDrawable().setColorFilter(azul, PorterDuff.Mode.SRC_IN);
 
         h.itemView.setOnClickListener(v -> {
             if (clickListener != null) clickListener.onItemClicked(o);
         });
+
         h.itemView.setOnLongClickListener(v -> {
             if (longClickListener != null) {
-                longClickListener.onItemLongClicked(o);
+                new AlertDialog.Builder(context)
+                        .setTitle("Eliminar objetivo")
+                        .setMessage("¿Seguro que deseas eliminar este objetivo de ahorro?")
+                        .setPositiveButton("Sí", (dialog, which) -> longClickListener.onItemLongClicked(o))
+                        .setNegativeButton("No", null)
+                        .show();
                 return true;
             }
             return false;
@@ -87,11 +105,12 @@ public class ObjetivoAhorroAdapter extends RecyclerView.Adapter<ObjetivoAhorroAd
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtNombre, txtMontoObjetivo;
         ProgressBar progressBar;
+
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtNombre        = itemView.findViewById(R.id.txtNombreObjetivo);
+            txtNombre = itemView.findViewById(R.id.txtNombreObjetivo);
             txtMontoObjetivo = itemView.findViewById(R.id.txtMontoObjetivo);
-            progressBar      = itemView.findViewById(R.id.progresoAhorro);
+            progressBar = itemView.findViewById(R.id.progresoAhorro);
         }
     }
 }
