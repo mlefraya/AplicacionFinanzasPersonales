@@ -27,8 +27,7 @@ public class ObjetivosAhorroFragment extends Fragment {
     private ObjetivoAhorroAdapter adapter;
     private RecyclerView recyclerView;
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -37,27 +36,29 @@ public class ObjetivosAhorroFragment extends Fragment {
         recyclerView = root.findViewById(R.id.recyclerViewObjetivos);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // ✅ Aquí está el cambio corregido
         adapter = new ObjetivoAhorroAdapter(requireContext());
         recyclerView.setAdapter(adapter);
 
         objetivoVm = new ViewModelProvider(this).get(ObjetivoAhorroViewModel.class);
-        balanceVm = new ViewModelProvider(this).get(BalanceViewModel.class);
+        balanceVm  = new ViewModelProvider(this).get(BalanceViewModel.class);
 
-        // Observa balance para actualizar progress
-        balanceVm.getBalance().observe(getViewLifecycleOwner(), adapter::setBalance);
+        // 1) Observar objetivos y enviarlos al adapter
+        objetivoVm.getTodosObjetivos().observe(getViewLifecycleOwner(), objetivos -> {
+            adapter.setItems(objetivos);
+        });
 
-        // Observa lista de objetivos
-        objetivoVm.getTodosObjetivos().observe(getViewLifecycleOwner(), adapter::setItems);
+        // 2) Observar el balance y enviarlo al adapter
+        balanceVm.getBalance().observe(getViewLifecycleOwner(), bal -> {
+            if (bal == null) bal = 0.0;
+            adapter.setBalance(bal);
+        });
 
-        // Editar y eliminar
         adapter.setOnItemClickListener(this::navigateToEditar);
         adapter.setOnItemLongClickListener(obj -> {
             objetivoVm.eliminar(obj);
             Toast.makeText(requireContext(), "Objetivo eliminado", Toast.LENGTH_SHORT).show();
         });
 
-        // FAB crea nuevo
         FloatingActionButton fab = root.findViewById(R.id.fab_add_objetivo);
         fab.setOnClickListener(v -> getParentFragmentManager()
                 .beginTransaction()
