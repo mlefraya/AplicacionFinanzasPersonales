@@ -40,14 +40,16 @@ public class EditarObjetivoFragment extends Fragment {
         return f;
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_editar_objetivo, container, false);
     }
 
-    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Recupera el Objetivo (serializable) desde los argumentos
@@ -56,12 +58,12 @@ public class EditarObjetivoFragment extends Fragment {
         }
         viewModel = new ViewModelProvider(this).get(ObjetivoAhorroViewModel.class);
 
-        EditText etDesc  = view.findViewById(R.id.etDescObjetivo);
-        EditText etMeta  = view.findViewById(R.id.etMetaObjetivo);
-        EditText etPlazo = view.findViewById(R.id.etPlazoObjetivo);
-        Button btnUpd    = view.findViewById(R.id.btnActualizarObjetivo);
-        Button btnCancel = view.findViewById(R.id.btnCancelarObjetivo);
-        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        EditText etDesc       = view.findViewById(R.id.etDescObjetivo);
+        EditText etMeta       = view.findViewById(R.id.etMetaObjetivo);
+        EditText etPlazo      = view.findViewById(R.id.etPlazoObjetivo);
+        Button btnUpd         = view.findViewById(R.id.btnActualizarObjetivo);
+        Button btnCancel      = view.findViewById(R.id.btnCancelarObjetivo);
+        ProgressBar progressBar = view.findViewById(R.id.progressBarObjetivo);
 
         // Carga valores en los campos
         if (objetivo != null) {
@@ -69,12 +71,11 @@ public class EditarObjetivoFragment extends Fragment {
 
             // Convertir montoObjetivo (EUR) → moneda local
             String currencyCode = PreferenceUtil.getCurrency(requireContext());
-            double metaEnEur = objetivo.getMontoObjetivo();
-            double metaLocal = CurrencyConverter.fromEur(metaEnEur, currencyCode);
+            double metaEnEur    = objetivo.getMontoObjetivo();
+            double metaLocal    = CurrencyConverter.fromEur(metaEnEur, currencyCode);
             etMeta.setText(String.format(Locale.getDefault(), "%.2f", metaLocal));
 
-            // Plazo: lo extraemos de la diferencia entre fechas (si se desea),
-            // pero aquí lo dejamos en blanco para que el usuario ingrese de nuevo.
+            // Dejamos el plazo en blanco para que el usuario lo ingrese de nuevo
             etPlazo.setText("");
         }
 
@@ -104,8 +105,13 @@ public class EditarObjetivoFragment extends Fragment {
             String currencyCode = PreferenceUtil.getCurrency(requireContext());
             double metaEnEur = CurrencyConverter.toEur(metaLocal, currencyCode);
 
-            // Recalcular fechaFin = fechaInicio + plazoMeses
+            // Asegurar fechaInicio no sea null
             Date fechaInicio = objetivo.getFechaInicio();
+            if (fechaInicio == null) {
+                fechaInicio = new Date();
+                objetivo.setFechaInicio(fechaInicio);
+            }
+            // Recalcular fechaFin = fechaInicio + plazoMeses
             Calendar cal = Calendar.getInstance();
             cal.setTime(fechaInicio);
             cal.add(Calendar.MONTH, plazoMeses);

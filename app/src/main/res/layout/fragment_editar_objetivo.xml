@@ -30,7 +30,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Descripción del objetivo">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDescObjetivo"
                         android:layout_width="match_parent"
@@ -43,7 +42,6 @@
                     android:layout_height="wrap_content"
                     android:hint="Meta"
                     android:layout_marginTop="16dp">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etMetaObjetivo"
                         android:layout_width="match_parent"
@@ -57,7 +55,6 @@
                     android:layout_height="wrap_content"
                     android:hint="Plazo (meses)"
                     android:layout_marginTop="16dp">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPlazoObjetivo"
                         android:layout_width="match_parent"

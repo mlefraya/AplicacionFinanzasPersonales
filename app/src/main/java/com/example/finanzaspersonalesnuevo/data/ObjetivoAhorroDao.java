@@ -15,10 +15,10 @@ import java.util.List;
 public interface ObjetivoAhorroDao {
 
     @Insert
-    long insertarObjetivo(ObjetivoAhorro objetivo); // Devuelve el ID insertado
+    long insertarObjetivo(ObjetivoAhorro objetivo);
 
     @Update
-    int updateObjetivo(ObjetivoAhorro objetivo); // Devuelve el número de filas afectadas
+    int updateObjetivo(ObjetivoAhorro objetivo);
 
     @Delete
     void deleteObjetivo(ObjetivoAhorro objetivo);
@@ -27,8 +27,7 @@ public interface ObjetivoAhorroDao {
     LiveData<List<ObjetivoAhorro>> getTodosObjetivos();
 
     @Query("SELECT * FROM objetivo_ahorro ORDER BY id DESC LIMIT 1")
-    LiveData<ObjetivoAhorro> getUltimoObjetivo(); // Obtiene el objetivo más reciente
-
+    LiveData<ObjetivoAhorro> getUltimoObjetivo();
     @Query("SELECT * FROM objetivo_ahorro WHERE id = :id")
-    LiveData<ObjetivoAhorro> getObjetivoById(int id); // Recupera un objetivo por su ID
+    LiveData<ObjetivoAhorro> getObjetivoById(int id);
 }
