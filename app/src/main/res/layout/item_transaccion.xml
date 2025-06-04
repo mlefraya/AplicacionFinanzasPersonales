@@ -32,7 +32,7 @@
             android:id="@+id/tvCantidad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cantidad"
+            android:text="Precio"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textColor="@android:color/holo_green_dark"
             android:layout_marginTop="4dp"/>
