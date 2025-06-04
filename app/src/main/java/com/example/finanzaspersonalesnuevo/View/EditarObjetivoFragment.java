@@ -5,6 +5,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,10 +17,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.finanzaspersonalesnuevo.Model.ObjetivoAhorro;
 import com.example.finanzaspersonalesnuevo.R;
+import com.example.finanzaspersonalesnuevo.Utils.CurrencyConverter;
+import com.example.finanzaspersonalesnuevo.Utils.PreferenceUtil;
 import com.example.finanzaspersonalesnuevo.ViewModel.ObjetivoAhorroViewModel;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class EditarObjetivoFragment extends Fragment {
@@ -44,41 +49,76 @@ public class EditarObjetivoFragment extends Fragment {
 
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Recupera el Objetivo (implementa Serializable en tu modelo)
+
+        // Recupera el Objetivo (serializable) desde los argumentos
         if (getArguments() != null) {
             objetivo = (ObjetivoAhorro) getArguments().getSerializable(ARG_OBJETIVO);
         }
         viewModel = new ViewModelProvider(this).get(ObjetivoAhorroViewModel.class);
 
-        TextInputEditText etDesc = view.findViewById(R.id.etDescObjetivo);
-        TextInputEditText etMeta = view.findViewById(R.id.etMetaObjetivo);
-        MaterialButton btnUpd  = view.findViewById(R.id.btnActualizarObjetivo);
-        MaterialButton btnCancel = view.findViewById(R.id.btnCancelarObjetivo);
+        EditText etDesc  = view.findViewById(R.id.etDescObjetivo);
+        EditText etMeta  = view.findViewById(R.id.etMetaObjetivo);
+        EditText etPlazo = view.findViewById(R.id.etPlazoObjetivo);
+        Button btnUpd    = view.findViewById(R.id.btnActualizarObjetivo);
+        Button btnCancel = view.findViewById(R.id.btnCancelarObjetivo);
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
 
+        // Carga valores en los campos
         if (objetivo != null) {
             etDesc.setText(objetivo.getDescripcion());
-            etMeta.setText(String.format(Locale.getDefault(),"%.2f", objetivo.getMontoObjetivo()));
+
+            // Convertir montoObjetivo (EUR) → moneda local
+            String currencyCode = PreferenceUtil.getCurrency(requireContext());
+            double metaEnEur = objetivo.getMontoObjetivo();
+            double metaLocal = CurrencyConverter.fromEur(metaEnEur, currencyCode);
+            etMeta.setText(String.format(Locale.getDefault(), "%.2f", metaLocal));
+
+            // Plazo: lo extraemos de la diferencia entre fechas (si se desea),
+            // pero aquí lo dejamos en blanco para que el usuario ingrese de nuevo.
+            etPlazo.setText("");
         }
 
         btnUpd.setOnClickListener(v -> {
             String d = etDesc.getText().toString().trim();
             String m = etMeta.getText().toString().trim();
-            if (TextUtils.isEmpty(d) || TextUtils.isEmpty(m)) {
+            String p = etPlazo.getText().toString().trim();
+
+            if (TextUtils.isEmpty(d) || TextUtils.isEmpty(m) || TextUtils.isEmpty(p)) {
                 Toast.makeText(requireContext(),
-                        "Complete descripción y meta", Toast.LENGTH_SHORT).show();
+                        "Complete todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
-            double meta;
+
+            double metaLocal;
+            int plazoMeses;
             try {
-                meta = Double.parseDouble(m);
+                metaLocal  = Double.parseDouble(m);
+                plazoMeses = Integer.parseInt(p);
             } catch (NumberFormatException ex) {
                 Toast.makeText(requireContext(),
-                        "Meta inválida", Toast.LENGTH_SHORT).show();
+                        "Valores inválidos", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            // Convertir meta local → EUR antes de guardar
+            String currencyCode = PreferenceUtil.getCurrency(requireContext());
+            double metaEnEur = CurrencyConverter.toEur(metaLocal, currencyCode);
+
+            // Recalcular fechaFin = fechaInicio + plazoMeses
+            Date fechaInicio = objetivo.getFechaInicio();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(fechaInicio);
+            cal.add(Calendar.MONTH, plazoMeses);
+            Date nuevaFechaFin = cal.getTime();
+
             objetivo.setDescripcion(d);
-            objetivo.setMontoObjetivo(meta);
+            objetivo.setMontoObjetivo(metaEnEur);
+            objetivo.setFechaFin(nuevaFechaFin);
+
+            progressBar.setVisibility(View.VISIBLE);
             viewModel.actualizar(objetivo);
+            progressBar.setVisibility(View.GONE);
+
             requireActivity().getSupportFragmentManager().popBackStack();
         });
 

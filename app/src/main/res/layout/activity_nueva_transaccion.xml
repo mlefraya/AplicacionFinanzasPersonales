@@ -26,17 +26,18 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
+                <!-- Descripción -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Descripción">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDescripcion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Precio (en moneda local) -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -44,12 +45,13 @@
                     android:layout_marginTop="16dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etCantidad"
+                        android:id="@+id/etPrecio"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Fecha -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -62,14 +64,14 @@
                         android:layout_height="wrap_content"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Spinner para Tipo -->
+                <!-- Spinner Tipo -->
                 <Spinner
                     android:id="@+id/spinnerTipo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"/>
 
-                <!-- Spinner para Categoría -->
+                <!-- Spinner Categoría -->
                 <Spinner
                     android:id="@+id/spinnerCategoria"
                     android:layout_width="match_parent"

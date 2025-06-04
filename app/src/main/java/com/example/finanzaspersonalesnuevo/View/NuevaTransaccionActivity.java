@@ -43,7 +43,7 @@ public class NuevaTransaccionActivity extends AppCompatActivity {
         sdf.setLenient(false);
 
         etDescripcion   = findViewById(R.id.etDescripcion);
-        etCantidad      = findViewById(R.id.etCantidad);
+        etCantidad      = findViewById(R.id.etPrecio);
         etFecha         = findViewById(R.id.etFecha);
         spinnerTipo     = findViewById(R.id.spinnerTipo);
         spinnerCategoria= findViewById(R.id.spinnerCategoria);

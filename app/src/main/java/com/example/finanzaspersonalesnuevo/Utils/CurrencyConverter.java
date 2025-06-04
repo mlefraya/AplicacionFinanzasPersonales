@@ -29,13 +29,24 @@ public class CurrencyConverter {
     }
 
     /**
-     * Convierte un importe dado en EUR a la moneda target.
-     * @param amountEur cantidad en euros
+     * Convierte una cantidad dada en EUR a la moneda destino.
+     * @param amountEur cantidad en EUR
      * @param targetCurrency código ISO de la moneda destino
-     * @return importe convertido (si no existe la tasa, devuelve el original)
+     * @return importe convertido (si no existe la tasa, devuelve el original en EUR)
      */
     public static double fromEur(double amountEur, String targetCurrency) {
         Double rate = rates.get(targetCurrency);
         return (rate != null) ? amountEur * rate : amountEur;
+    }
+
+    /**
+     * Convierte una cantidad dada en la moneda destino a EUR.
+     * @param amountLocal cantidad en la moneda local
+     * @param localCurrency código ISO de la moneda local
+     * @return importe convertido a EUR (si no existe la tasa, devuelve el original)
+     */
+    public static double toEur(double amountLocal, String localCurrency) {
+        Double rate = rates.get(localCurrency);
+        return (rate != null && rate != 0.0) ? amountLocal / rate : amountLocal;
     }
 }

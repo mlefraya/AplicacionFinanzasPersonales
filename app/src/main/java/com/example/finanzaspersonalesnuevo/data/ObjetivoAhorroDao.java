@@ -6,7 +6,9 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
+
 import com.example.finanzaspersonalesnuevo.Model.ObjetivoAhorro;
+
 import java.util.List;
 
 @Dao
@@ -26,4 +28,7 @@ public interface ObjetivoAhorroDao {
 
     @Query("SELECT * FROM objetivo_ahorro ORDER BY id DESC LIMIT 1")
     LiveData<ObjetivoAhorro> getUltimoObjetivo(); // Obtiene el objetivo más reciente
+
+    @Query("SELECT * FROM objetivo_ahorro WHERE id = :id")
+    LiveData<ObjetivoAhorro> getObjetivoById(int id); // Recupera un objetivo por su ID
 }

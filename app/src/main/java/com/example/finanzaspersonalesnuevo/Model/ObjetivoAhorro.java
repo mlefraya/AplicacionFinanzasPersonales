@@ -4,16 +4,17 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
+
 import com.example.finanzaspersonalesnuevo.data.Converters;
 
-import java.io.Serializable;    // <--- Import necesario
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 @Entity(tableName = "objetivo_ahorro")
 @TypeConverters(Converters.class)
-public class ObjetivoAhorro implements Serializable {  // <--- Implementamos Serializable
+public class ObjetivoAhorro implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -21,9 +22,11 @@ public class ObjetivoAhorro implements Serializable {  // <--- Implementamos Ser
     @ColumnInfo(name = "descripcion")
     private String descripcion;
 
+    /** Monto objetivo en EUR */
     @ColumnInfo(name = "monto_objetivo")
     private double montoObjetivo;
 
+    /** Monto ahorrado en EUR */
     @ColumnInfo(name = "monto_actual")
     private double montoActual;
 
@@ -33,10 +36,8 @@ public class ObjetivoAhorro implements Serializable {  // <--- Implementamos Ser
     @ColumnInfo(name = "fecha_fin")
     private Date fechaFin;
 
-    // Constructor por defecto (para Room)
     public ObjetivoAhorro() { }
 
-    // Constructor completo
     public ObjetivoAhorro(String descripcion,
                           double montoObjetivo,
                           double montoActual,
@@ -49,7 +50,6 @@ public class ObjetivoAhorro implements Serializable {  // <--- Implementamos Ser
         this.fechaFin       = fechaFin;
     }
 
-    // Constructor para definir el objetivo por plazo en meses (montoActual inicia en 0)
     public ObjetivoAhorro(String descripcion,
                           double montoObjetivo,
                           int plazoMeses) {
@@ -82,11 +82,20 @@ public class ObjetivoAhorro implements Serializable {  // <--- Implementamos Ser
     public Date getFechaFin() { return fechaFin; }
     public void setFechaFin(Date fechaFin) { this.fechaFin = fechaFin; }
 
-    // Calcula el progreso (%)
+    /** (Compatibilidad con UI antigua) */
+    public double getMeta() {
+        return montoObjetivo;
+    }
+
+    /** (Compatibilidad con UI antigua) */
+    public double getCantidadAhorrada() {
+        return montoActual;
+    }
+
+    /** Progreso en % */
     public double getProgreso() {
-        return montoObjetivo == 0
-                ? 0
-                : (montoActual / montoObjetivo) * 100;
+        if (montoObjetivo <= 0) return 0;
+        return (montoActual / montoObjetivo) * 100;
     }
 
     @Override
